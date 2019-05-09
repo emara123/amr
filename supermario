@@ -1,0 +1,367 @@
+package supermario;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Random;
+import javax.swing.*;
+import javax.swing.ImageIcon;
+import java.awt.Rectangle;
+import java.io.*;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.Clip;
+
+public class SuperMario extends JFrame {
+
+    public static void music (File sound){             
+                try {
+                    Clip clip = AudioSystem.getClip();
+                    clip.open(AudioSystem.getAudioInputStream(sound));
+                    clip.start();                    
+                } catch (Exception e) {
+              }
+            }        
+     private final JPanel Gamepanel = new JPanel();
+     private final JPanel topbar = new JPanel();
+     private final JLabel score = new JLabel("Score :");
+     private final JLabel lvl = new JLabel("Level :");
+     private final JLabel C = new JLabel("Coins :");    
+     private final JTextField scorebar = new JTextField();
+     private final JTextField lvlbar = new JTextField();
+     private final JTextField Cbar = new JTextField();     
+     private final JLabel mariolbl = new JLabel();
+     private final javax.swing.Timer timer;
+     private final javax.swing.Timer timer2;
+     private javax.swing.Timer timer3;
+     
+       JLabel coin;
+       ArrayList<JLabel> coinarray = new ArrayList<JLabel>();
+       ImageIcon coinimage = new ImageIcon(new ImageIcon("coin.png").getImage().getScaledInstance(25, 25, 250));
+            public void addcoin(){
+               coin = new JLabel();
+               coin.setIcon(coinimage);   
+               Random r = new Random();
+               int x = r.nextInt(9700+1-500)+500;
+               int y = r.nextInt(200+1-85)+85;
+               coin.setBounds(x, y, 25, 25);
+               Gamepanel.add(coin,0);
+               coinarray.add(coin);                              
+  } 
+            
+       JLabel groundmonster;
+       ArrayList<JLabel> groundmonsterarray = new ArrayList<JLabel>();
+       ImageIcon groundmonsterimage = new ImageIcon(new ImageIcon("monster.png").getImage().getScaledInstance(50, 50, 250));
+            public void addgroundmonster(){                
+               groundmonster = new JLabel();
+               groundmonster.setIcon(groundmonsterimage);   
+               Random r = new Random();
+               int x = r.nextInt(30000+1-500)+700;   
+               groundmonster.setBounds(x, 339, 50, 50);                
+               Gamepanel.add(groundmonster,0);
+               groundmonsterarray.add(groundmonster);                            
+            }
+            
+       JLabel airmonster;
+       ArrayList<JLabel> airmonsterarray = new ArrayList<JLabel>();
+       ImageIcon airmonsterimage = new ImageIcon(new ImageIcon("airmonster.png").getImage().getScaledInstance(50, 50, 250));
+            public void addairmonster(){                
+               airmonster = new JLabel();
+               airmonster.setIcon(airmonsterimage);   
+               Random r = new Random();
+               int x = r.nextInt(21000+1-1200)+1200;
+               int y = r.nextInt(200+1-85)+85;  
+               airmonster.setBounds(x, y, 50, 50);                
+               Gamepanel.add(airmonster,0);
+               airmonsterarray.add(airmonster);                            
+            }
+            
+            
+       JLabel Background;
+       ArrayList<JLabel> BackGroundarray = new ArrayList<JLabel>();
+       ImageIcon BackGroundimage = new ImageIcon(new ImageIcon("background2.png").getImage().getScaledInstance(700, 400, 200));  
+       int backgroundX=0;
+       int s=0;
+            public void addbackground(){                
+               Background = new JLabel();
+               Background.setIcon(BackGroundimage);     
+               if(backgroundX==0){             
+               Background.setBounds(0, 0 ,700, 410);
+               }
+               else{
+               Background.setBounds(backgroundX, 0 ,700, 410);   
+               }
+               Gamepanel.add(Background);
+               BackGroundarray.add(Background); 
+               backgroundX+=700;            
+             }
+            
+        int l = 0;
+        int addlevel = 50;
+        int level1 = 1;
+        int newlvl = 0;       
+        
+        
+     public SuperMario() {
+ 
+         File mariosong =new File("Super - Mario.wav");
+         music(mariosong);       
+         
+         setBounds(120, 80, 1200, 463);
+         Container c = getContentPane();
+         setDefaultCloseOperation(EXIT_ON_CLOSE);
+         setTitle("Super Mario");
+         setResizable(false);
+                  
+         //etsh
+         topbar.setLayout(null);
+         topbar.setPreferredSize(new Dimension(30, 30));        
+         topbar.add(scorebar);
+         topbar.add(score);
+         topbar.add(lvl);
+         topbar.add(lvlbar);
+         topbar.add(C);
+         topbar.add(Cbar);
+         topbar.setBackground(Color.cyan);
+         
+         scorebar.setBounds(1100, 10, 90, 20);
+         scorebar.setBackground(new Color(74, 210, 50));        
+         scorebar.setEnabled(false);
+         scorebar.setFont(new Font("serif", Font.BOLD, 26));
+         
+         score.setFont(new Font("serif", Font.BOLD,30));
+         score.setForeground(new Color(192, 141, 101));
+         score.setBounds(1000,0, 120, 30);
+              
+         lvl.setFont(new Font("serif", Font.BOLD,30));
+         lvl.setForeground(new Color(192, 141, 101));
+         lvl.setBounds(500, 0, 120, 30);
+         
+         lvlbar.setBounds(600, 10, 30, 20);
+         lvlbar.setBackground(new Color(74, 210, 50));        
+         lvlbar.setEnabled(false);
+         lvlbar.setFont(new Font("serif", Font.BOLD, 25));
+         lvlbar.setText(""+level1);
+         
+         C.setFont(new Font("serif", Font.BOLD,30));
+         C.setForeground(new Color(192, 141, 101));
+         C.setBounds(30, 0, 120, 30);
+         
+         Cbar.setBounds(130, 10, 30, 20);
+         Cbar.setBackground(new Color(74, 210, 50));        
+         Cbar.setEnabled(false);
+         Cbar.setFont(new Font("serif", Font.BOLD, 22));
+         Cbar.setText("0");
+
+         c.add(topbar,BorderLayout.NORTH); 
+         
+         mariolbl.setIcon(new ImageIcon (new ImageIcon ("hero_chara_mario_pc.png").getImage().getScaledInstance(80, 80, 150)));
+         mariolbl.setBounds(400, 310, 80, 80);
+         
+         Gamepanel.add(mariolbl);      
+         Gamepanel.setLayout(null);     
+         Gamepanel.setPreferredSize(new Dimension(700, 400));
+         Gamepanel.setBackground(Color.cyan);  
+         
+             int coins =0;
+             while(coins<60){
+             addcoin();
+             coins++;
+             }
+             
+             int groundmonsters =0;
+             while(groundmonsters<30){
+             addgroundmonster();
+             groundmonsters++;
+             }
+             
+             int airmonster =0;
+             while(airmonster<30){
+             addairmonster();
+             airmonster++;
+             }
+             
+             int backgrounds =0;
+             while(backgrounds<500){
+             addbackground();
+             backgrounds++;
+             }
+
+         File coinsound =new File("Super Mario Bros. Theme Song.wav");
+         File gameover =new File("Super Mario Bros. - Game Over Sound Effect.wav");  
+         
+         timer = new javax.swing.Timer(15, new ActionListener() {
+             @Override
+             public void actionPerformed(ActionEvent e) {    
+                 
+                 Rectangle x = mariolbl.getBounds();
+                  for(int i=0;i<groundmonsterarray.size();i++){
+                  Rectangle y = groundmonsterarray.get(i).getBounds(); 
+                   if(x.intersects(y)){
+                     music(gameover);
+                     timer2.stop();
+                     JOptionPane.showMessageDialog(null, "Game Over");
+                     System.exit(0);                  
+                    }                
+                 }
+                  
+                 Rectangle z = mariolbl.getBounds();
+                  for(int i=0;i<airmonsterarray.size();i++){
+                  Rectangle k = airmonsterarray.get(i).getBounds(); 
+                   if(z.intersects(k)){
+                     music(gameover);                    
+                     timer2.stop();
+                     JOptionPane.showMessageDialog(null, "Game Over");
+                     System.exit(0);                  
+                    }                
+                 }
+                                   
+                 Rectangle a = mariolbl.getBounds();
+                  for(int i=0;i<coinarray.size();i++){                     
+                  Rectangle b = coinarray.get(i).getBounds();
+                   if(a.intersects(b)){                    
+                     music(coinsound);
+                     Gamepanel.remove(coinarray.get(i));  
+                     coinarray.remove(i);
+                     Gamepanel.revalidate();
+                     Gamepanel.repaint();                                                        
+                     Cbar.setText(String.valueOf(Integer.parseInt(Cbar.getText())+1));                   
+                    }
+                 }
+    
+                 for(int i=0;i<coinarray.size();i++){
+                 coinarray.get(i).setLocation(coinarray.get(i).getX()-6, coinarray.get(i).getY());
+                 }
+                 
+                 if(Integer.parseInt(lvlbar.getText())>2){
+                     for(int i=0;i<groundmonsterarray.size();i++){
+                 groundmonsterarray.get(i).setLocation(groundmonsterarray.get(i).getX()-13, groundmonsterarray.get(i).getY()); 
+                   }
+                 }
+                 else{
+                 for(int i=0;i<groundmonsterarray.size();i++){
+                 groundmonsterarray.get(i).setLocation(groundmonsterarray.get(i).getX()-7, groundmonsterarray.get(i).getY()); 
+                 
+                   }
+                 }
+                 if(Integer.parseInt(lvlbar.getText())>1){
+                 for(int i=0;i<airmonsterarray.size();i++){
+                 airmonsterarray.get(i).setLocation(airmonsterarray.get(i).getX()-7, airmonsterarray.get(i).getY());                
+                   }
+                 }   
+                 
+                 for(int i=0;i<BackGroundarray.size();i++){                 
+                 BackGroundarray.get(i).setLocation(BackGroundarray.get(i).getX()-25, BackGroundarray.get(i).getY());                 
+                 } 
+                                             
+                 if(mariolbl.getY()<310){
+                     mariolbl.setLocation(mariolbl.getX()+2, mariolbl.getY()+5);
+                 }
+                 
+                 mariolbl.setLocation(mariolbl.getX()-3, mariolbl.getY());
+
+                 Gamepanel.repaint();
+             }
+         });
+         timer.start();
+ 
+         timer2 = new javax.swing.Timer(200, new ActionListener() {
+             @Override
+              public void actionPerformed(ActionEvent e) {                 
+                 s++;
+                 scorebar.setText(""+s);                 
+                 if(s>addlevel){
+                   l++;  
+                   newlvl++;
+                   newlvl = level1 + l;
+                   lvlbar.setText(""+newlvl);
+                   addlevel+=50;
+                 }
+              }
+          });
+         timer2.start();
+       
+         Gamepanel.addKeyListener(new KeyAdapter(){
+             public void keyPressed(KeyEvent e){  
+                 if(e.getKeyCode()==KeyEvent.VK_UP){
+                     if(mariolbl.getY()-180<0){
+                          mariolbl.setLocation(mariolbl.getX(), mariolbl.getY());
+                     }
+                     else{mariolbl.setLocation(mariolbl.getX()+100, mariolbl.getY()-200);
+                  }
+                 }
+                 if(e.getKeyCode()==KeyEvent.VK_RIGHT){
+                     if(mariolbl.getX()<1200-150)
+                     mariolbl.setLocation(mariolbl.getX()+100, mariolbl.getY());
+                     mariolbl.setLocation(mariolbl.getX()-80, mariolbl.getY());      
+                 }
+                 else{
+                     mariolbl.setLocation(mariolbl.getX(), mariolbl.getY());
+                 }
+                 
+                 JLabel proj = new JLabel();  
+                 proj.setBounds(mariolbl.getX(), mariolbl.getY(), 50, 50);
+                 ImageIcon projimg = new ImageIcon(new ImageIcon("fireball.png").getImage().getScaledInstance(50, 50, 250));
+                 proj.setIcon(projimg);
+                 File moveandproj =new File("Super Mario Bros. - Fireball Sound Effect.wav");  
+                 music(moveandproj);
+                 
+                 if(e.getKeyCode()==KeyEvent.VK_SPACE)
+                   if((Integer.parseInt(Cbar.getText()))>10)
+                 { 
+                 timer3 = new javax.swing.Timer(30, new ActionListener() {
+                      @Override
+                      public void actionPerformed(ActionEvent e) {                                                                
+                         proj.setLocation(proj.getX()+10,proj.getY());                       
+                         Gamepanel.add(proj,0);
+                         
+                         Rectangle p = proj.getBounds();
+                         for(int i = 0; i<groundmonsterarray.size();i++){
+                         Rectangle g = groundmonsterarray.get(i).getBounds();
+                         if(p.intersects(g)){
+                            Gamepanel.remove(groundmonsterarray.get(i));  
+                            groundmonsterarray.remove(i);
+                            Gamepanel.revalidate();
+                            Gamepanel.repaint();
+                            timer3.stop();
+                            Gamepanel.remove(proj);
+                           }          
+                         
+                         Rectangle j = proj.getBounds();
+                         for(int k = 0; k<airmonsterarray.size();k++){
+                         Rectangle h = airmonsterarray.get(k).getBounds();
+                         if(j.intersects(h)){
+                            Gamepanel.remove(airmonsterarray.get(k));  
+                            airmonsterarray.remove(k);
+                            Gamepanel.revalidate();
+                            Gamepanel.repaint();
+                            timer3.stop();
+                            Gamepanel.remove(proj);
+                             }   
+                           }                        
+                         }             
+                       }    
+                    });
+                 
+                 timer3.start();
+                  }                         
+                }                          
+            });
+         
+                 
+                  
+         Gamepanel.setFocusable(true);
+         c.add(Gamepanel,BorderLayout.CENTER);
+               
+      }
+   
+    public static void main(String[] args) {   
+       menu m = new menu();
+       m.setVisible(true);
+    } 
+}
